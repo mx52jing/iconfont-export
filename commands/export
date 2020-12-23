@@ -8,7 +8,7 @@ const upperFirst = require('lodash').upperFirst
 const shell = require('shelljs')
 
 shell
-    .echo(colors.yellow('start build icon and generate iconfont directory'))
+    .echo(colors.green('start build icon and generate iconfont directory'))
     .exec('npx iconfont-h5')
 
 // 获取配置信息
@@ -50,6 +50,9 @@ const IconFont = ({ name, ...rest }) => {
 export const IconFontMaps = {
     #iconMaps#
 }
+export {
+    #allIconComp#
+}
 export default IconFont
 `
 // 获取组件所有内容
@@ -74,15 +77,17 @@ const spliceContent = (names, pathName, index, allLen) => {
         isLast = index === allLen - 1
     let imports = '',
         cases = '',
-        iconMaps = ''
+        iconMaps = '',
+        allIconComp = ''
     for (const name of names) {
         const componentName = `Icon${upperFirst(camelCase(name))}`
         imports += `import ${componentName} from './${pathName}/${componentName}'\n`
         const iconName = name.toLowerCase().replace(prefix, '')
         cases += `${whitespace(8)}case '${iconName}':\n${whitespace(12)}return <${componentName} {...rest} />;\n`
         iconMaps += `${whitespace(4)}'${iconName}': ${componentName},\n`
+        allIconComp += `${whitespace(4)}${componentName},\n`
     }
-    for (const replaceKey of ['imports', 'cases', 'iconMaps']) {
+    for (const replaceKey of ['imports', 'cases', 'iconMaps', 'allIconComp']) {
         template = template.replace(
             new RegExp(`#${replaceKey}#`),
             isLast ? eval(replaceKey) : `${eval(`${replaceKey}\n`)}#${replaceKey}#`
