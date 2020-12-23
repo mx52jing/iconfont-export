@@ -1,0 +1,25 @@
+{
+  "name": "iconfont-export",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "iconfont-init": "./commands/init",
+    "iconfont-export": "./commands/export"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iconfont"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "1.4.0",
+    "fs-extra": "9.0.1",
+    "lodash": "4.17.20",
+    "react-iconfont-cli": "2.0.0",
+    "shelljs": "0.8.4"
+  }
+}

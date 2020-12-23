@@ -1,0 +1,8 @@
+#! /usr/bin/env node
+const shell = require('shelljs')
+const colors = require('colors')
+
+shell
+    .echo(colors.yellow('start build icon and generate iconfont directory'))
+    .exec('npx iconfont-h5')
+    .exec('node commands/buildIcon.js')

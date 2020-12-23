@@ -1,0 +1,10 @@
+#! /usr/bin/env sh
+whoami=$(npm whoami 2>/dev/null)
+if [ -z "$whoami" ]
+then
+    echo "Please login first"
+    npm login
+fi
+echo "Login Accout $(npm whoami)"
+echo "Start Publish..."
+npm publish --access=public

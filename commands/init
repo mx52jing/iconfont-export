@@ -1,0 +1,14 @@
+#! /usr/bin/env node
+const path = require('path')
+const fs = require('fs')
+const shell = require('shelljs')
+const colors = require('colors')
+
+const targetFilePath = path.resolve('iconfont.json')
+
+if (fs.existsSync(targetFilePath)) {
+    shell.echo(colors.red('iconfont.json existed'))
+    shell.exit(1)
+}
+
+shell.exec('npx iconfont-init')
