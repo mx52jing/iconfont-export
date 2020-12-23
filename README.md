@@ -39,7 +39,7 @@ npm install iconfont-export
 ### Step1
 生成配置文件
 ```
-npx iconfont-init
+npx font-init
 ```
 
 此时项目根目录会生成一个`iconfont.json`的文件，内容如下：
@@ -61,7 +61,7 @@ npx iconfont-init
 ### Step3
 生成React标准组件并生成导出文件
 ```bash
-npx iconfont-export
+npx font-export
 ```  
 
 **最终导出文件格式**

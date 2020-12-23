@@ -1,11 +1,11 @@
 {
   "name": "iconfont-export",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "bin": {
-    "iconfont-init": "./commands/init",
-    "iconfont-export": "./commands/export"
+    "font-init": "./commands/init",
+    "font-export": "./commands/export"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,7 @@
   "keywords": [
     "iconfont"
   ],
+  "repository": "git@github.com:mx52jing/iconfont-export.git",
   "author": "",
   "license": "MIT",
   "dependencies": {
