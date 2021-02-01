@@ -71,17 +71,17 @@ import IconNameA from './A/IconNameA'
 import IconNameB from './A/IconNameB'
 ...
 
-export const IconFontMap = {
-    'name': IconA,
+export const IconFontMap = new Map([
+    ['namea', IconA],
+    ['nameb', IconB],
     ...
-}
+])
 const IconFont = ({ name, ...rest }) => {
-    siwtch(name) {
-        case 'name':
-            return <IconName {...rest}>;
-        ...
-    }
-    return null
+    const Icon = IconFontMaps.get(name)
+    if(!Icon) return null;
+    return (
+        <Icon {...rest}/>
+    )
 }
 export {
     IconA,

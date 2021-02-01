@@ -23,11 +23,16 @@ const getConfig = () => {
     }
 }
 // 获取所有组件名称
-const getNames = str => {
+const getNameMap = str => {
     const reg = /case\s+['"]([0-9a-zA-Z-_]+)['"]:/g,
-        names = new Set()
+        names = new Map()
     str.replace(reg, (match, key) => {
-        names.add(key)
+        const lowercase = camelCase(key),
+            uppercase = upperFirst(lowercase),
+            fileNameReg = new RegExp(`import\\s+(Icon(?:${lowercase}|${uppercase}))\\s+from`)
+        if(fileNameReg.test(str)) {
+            names.set(key, RegExp.$1)
+        }
     })
     return names
 }
@@ -40,16 +45,18 @@ const whitespace = repeat => {
 let template = `import React from 'react';
 #imports#
 
+export const IconFontMaps = new Map([
+    #iconMaps#
+])
+
 const IconFont = ({ name, ...rest }) => {
-    switch(name) {
-    #cases#
-    }
-    return null
+    const Icon = IconFontMaps.get(name)
+    if(!Icon) return null;
+    return (
+        <Icon {...rest}/>
+    )
 }
 
-export const IconFontMaps = {
-    #iconMaps#
-}
 export {
     #allIconComp#
 }
@@ -66,36 +73,34 @@ const generateFileContent = () => {
         allDirectoryLen = filterDirectories.length
     filterDirectories.forEach((item, index) => {
         const file = fs.readFileSync(path.join(fontDirPath, item, 'index.js'), { encoding: 'utf8' }),
-            names = getNames(file)
-        spliceContent(names, item, index, allDirectoryLen)
+            nameMaps = getNameMap(file)
+        spliceContent(nameMaps, item, index, allDirectoryLen)
     })
 }
 
 // 拼接文件内容
-const spliceContent = (names, pathName, index, allLen) => {
-    const { prefix } = getConfig(),
-        isLast = index === allLen - 1
+const spliceContent = (nameMaps, pathName, index, allLen) => {
+    const isLast = index === allLen - 1
     let imports = '',
-        cases = '',
+        // cases = '',
         iconMaps = '',
         allIconComp = ''
-    for (const name of names) {
-        const componentName = `Icon${upperFirst(camelCase(name))}`
-        imports += `import ${componentName} from './${pathName}/${componentName}'\n`
-        const iconName = name.toLowerCase().replace(prefix, '')
-        cases += `${whitespace(8)}case '${iconName}':\n${whitespace(12)}return <${componentName} {...rest} />;\n`
-        iconMaps += `${whitespace(4)}'${iconName}': ${componentName},\n`
-        allIconComp += `${whitespace(4)}${componentName},\n`
+    for (const [name, filename] of nameMaps) {
+        imports += `import ${filename} from './${pathName}/${filename}'\n`
+        // cases += `${whitespace(8)}case '${name}':\n${whitespace(12)}return <${filename} {...rest} />;\n`
+        iconMaps += `${whitespace(4)}["${name}", ${filename}],\n`
+        allIconComp += `${whitespace(4)}${filename},\n`
     }
-    for (const replaceKey of ['imports', 'cases', 'iconMaps', 'allIconComp']) {
+    for (const replaceKey of ['imports', 'iconMaps', 'allIconComp']) {
+        const replaceContent = eval(replaceKey)
         template = template.replace(
             new RegExp(`#${replaceKey}#`),
-            isLast ? eval(replaceKey) : `${eval(`${replaceKey}\n`)}#${replaceKey}#`
+            isLast ? replaceContent : `${replaceContent}#${replaceKey}#`
         )
     }
 }
 
-const exportFn = async () => {
+!(async () => {
     try {
         await generateFileContent()
         const { fontDirPath } = getConfig(),
@@ -105,5 +110,4 @@ const exportFn = async () => {
     } catch (err) {
         console.log(colors.red(err))
     }
-}
-exportFn()
+})()
